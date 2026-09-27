@@ -1,0 +1,15 @@
+# T3 decoy: a second job ALSO named `backend`, which always fails. It runs only on PRs into t3-base
+# (a base-branch filter, not an `if:`, because a job skipped by `if:` reports success).
+name: decoy
+on:
+  pull_request:
+    branches: [t3-base]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "decoy backend: failing on purpose"
+          exit 1

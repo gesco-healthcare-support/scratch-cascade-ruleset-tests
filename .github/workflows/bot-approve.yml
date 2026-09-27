@@ -1,0 +1,19 @@
+# T8: approve a PR as github-actions[bot], to see whether that approval counts toward a required review.
+name: bot-approve
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number to approve
+        required: true
+permissions:
+  pull-requests: write
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr }}
+          REPO: ${{ github.repository }}
+        run: gh pr review "$PR" --approve --repo "$REPO"

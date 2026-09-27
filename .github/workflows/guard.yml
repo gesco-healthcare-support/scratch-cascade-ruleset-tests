@@ -1,0 +1,31 @@
+# Order guard under test. pull_request_target runs this file from the default branch, never from the PR.
+# No checkout, no permissions: it reads only the event's branch names.
+name: guard
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+permissions: {}
+jobs:
+  promotion-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the promotion source
+        env:
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          THIS_REPO: ${{ github.repository }}
+        run: |
+          echo "base=$BASE head=$HEAD head_repo=$HEAD_REPO"
+          if [ "$HEAD_REPO" != "$THIS_REPO" ]; then
+            echo "refused: head is not from this repository"
+            exit 1
+          fi
+          case "$BASE" in
+            staging) [ "$HEAD" = "main" ] && exit 0 ;;
+            production) [ "$HEAD" = "staging" ] && exit 0 ;;
+            qwen) [ "$HEAD" = "main" ] && exit 0 ;;
+            *) exit 0 ;;
+          esac
+          echo "refused: $HEAD -> $BASE is not an allowed promotion"
+          exit 1

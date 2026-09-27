@@ -1,0 +1,12 @@
+# T7: a check that ONLY a push to main produces, never a pull_request run.
+name: push-only
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  push-check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "push-only check passed"
