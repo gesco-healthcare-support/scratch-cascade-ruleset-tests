@@ -3,7 +3,7 @@
 name: guard
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, edited]
+    # T5 variant A: default types only (no edited)
 permissions: {}
 jobs:
   promotion-guard:
