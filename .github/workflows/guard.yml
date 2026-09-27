@@ -7,6 +7,8 @@ on:
 permissions: {}
 jobs:
   promotion-guard:
+    # T3b: one check name per target branch, so PRs sharing a head commit cannot block each other.
+    name: guard-into-${{ github.base_ref }}
     runs-on: ubuntu-latest
     steps:
       - name: Check the promotion source
